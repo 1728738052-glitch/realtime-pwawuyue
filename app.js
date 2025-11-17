@@ -1,24 +1,17 @@
 const symbols = ['BTC-USDT','ETH-USDT','SOL-USDT','BNB-USDT'];
 
-// 连接 OKX WebSocket 获取实时行情
-const ws = new WebSocket('wss://ws.okx.com:8443/ws/v5/public');
-
-ws.onopen = () => {
-  ws.send(JSON.stringify({
-    op: "subscribe",
-    args: symbols.map(sym=>({channel:"ticker",instId:sym}))
-  }));
-};
-
-ws.onmessage = (msg) => {
-  const data = JSON.parse(msg.data);
-  if(data.arg && data.data){
-    const sym = data.arg.instId;
-    const price = parseFloat(data.data[0].last);
-    const signal = data.data[0].last >= data.data[0].open ? '做多':'做空';
-    updateUI(sym, price, signal);
-  }
-};
+function fetchTicker(symbol) {
+  fetch(`https://www.okx.com/api/v5/market/ticker?instId=${symbol}`)
+    .then(res => res.json())
+    .then(data => {
+      if(data.data && data.data[0]){
+        const last = parseFloat(data.data[0].last);
+        const open = parseFloat(data.data[0].open24h);
+        const signal = last >= open ? '做多':'做空';
+        updateUI(symbol, last, signal);
+      }
+    }).catch(err => console.log('获取行情失败', err));
+}
 
 function updateUI(symbol, price, signal){
   document.querySelector(`#${symbol} .price`).innerText = price.toFixed(2);
@@ -31,8 +24,15 @@ function updateUI(symbol, price, signal){
   }
 }
 
+function startPolling() {
+  symbols.forEach(sym => fetchTicker(sym));
+  setTimeout(startPolling, 2000);
+}
+
 if(Notification.permission !== 'granted'){
-  Notification.requestPermission();
+  Notification.requestPermission().then(startPolling);
+} else {
+  startPolling();
 }
 
 function switchTheme() {
