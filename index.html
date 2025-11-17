@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实时看盘 PWA</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>实时看盘 PWA</h1>
+<div id="app">
+  <div class="symbol" id="BTC-USDT">BTC/USDT: <span class="price">--</span> <span class="signal">等待中</span></div>
+  <div class="symbol" id="ETH-USDT">ETH/USDT: <span class="price">--</span> <span class="signal">等待中</span></div>
+  <div class="symbol" id="SOL-USDT">SOL/USDT: <span class="price">--</span> <span class="signal">等待中</span></div>
+  <div class="symbol" id="BNB-USDT">BNB/USDT: <span class="price">--</span> <span class="signal">等待中</span></div>
+  <button onclick="switchTheme()">切换主题</button>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
